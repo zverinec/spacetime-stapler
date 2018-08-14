@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>The Button</title>
+    </head>
+    <body>
+        <h1>The service page</h1>
+        <label>Enter new secret:</label>
+        <input type="text" id="newsecret">
+        <button onclick="reset()" type="button">Reset it!</button>
+        <div>
+            <div>
+                Client count: <span id="clients"></span>
+            </div>
+            <div>
+                Revealed: <span id="revealed"></span>
+            </div>
+            <div>
+                Current secret: <span id="secret"></span>
+            </div>
+        </div>
+    </body>
+
+    <script src="jquery-3.3.1.min.js"></script>
+    <script>
+        function reset() {
+            s = $("#newsecret").val()
+            $.post("secret", {"secret": s});
+        }
+        function update() {
+            $.get("status").done(function(data) {
+                $("#clients").text(data["clients"].toString());
+                if (data["revealed"]) {
+                    $("#revealed").text("Yes");
+                }
+                else {
+                    $("#revealed").text("No");
+                }
+                $("#secret").text(data["secret"]);
+            });
+        }
+
+        $(document).ready(function(){
+            update();
+            setInterval(update,1000);
+        });
+    </script>
+</html>

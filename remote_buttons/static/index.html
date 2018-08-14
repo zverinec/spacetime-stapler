@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>The Button</title>
+    </head>
+    <body>
+        <h1>Behold!</h1>
+        <div id="message">
+        </div>
+    </body>
+
+    <script src="jquery-3.3.1.min.js"></script>
+    <script>
+        function update() {
+            $.get("status").done(function(data) {
+                if (data["revealed"]) {
+                    $("#message").text("The secret: " + data["secret"])
+                }
+                else {
+                    $("#message").text("There is nothing to see!")
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            setInterval(update,1000);
+        });
+    </script>
+</html>
