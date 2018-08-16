@@ -1,0 +1,30 @@
+body { 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	color: rgb(42,42,42); 
+	background-color: rgb(242,242,242); 
+	text-align:center; 
+	margin: 0; 
+	padding: 0; 
+	height: 100%; 
+	background-image: url("circuit-background.png"); 
+	background-repeat: repeat;
+	font-size: 150%;
+}
+
+.root {
+	height: 50%;
+	width: 50%;
+	margin: 10% auto 0% auto;
+	padding: 50px;
+	background-color: rgb(242,242,242);
+	box-shadow: 0 0 60px rgba(42,42,42,1);
+}
+
+h1 {
+	font-size: 300%;
+	margin-top: 0px;
+}
+
+div {
+	margin: 10px;
+}
