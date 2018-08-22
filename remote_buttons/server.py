@@ -13,13 +13,15 @@ def iter_ids():
             yield "".join(s)
 
 alive_tolerance = 5
-press_tolerance = 3
+show_tolerance = 5
 
 app.clients = {}
 app.secret = "The precious secret"
 app.id_prefix = str(int(timer())) + "_"
 app.ids = iter_ids()
 app.revealed = False
+app.hide_time = 0
+app.press_tolerance = 3
 
 class Client:
     def __init__(self):
@@ -36,7 +38,7 @@ class Client:
         return timer() - self.last_active < alive_tolerance
 
     def is_pressed(self):
-        return timer() - self.last_press < press_tolerance
+        return timer() - self.last_press < app.press_tolerance
 
 def active_count(clients):
     return len(list(filter(lambda x: x[1].active(), clients.items())))
@@ -92,8 +94,12 @@ def status():
             secret: <string>
         }
     """
+    if timer() > app.hide_time:
+        app.revealed = False
     if not app.revealed:
         app.revealed = is_revealed(app.clients)
+        if app.revealed:
+            app.hide_time = timer() + show_tolerance
     data = {
         "revealed": app.revealed,
         "clients": active_count(app.clients),
@@ -131,6 +137,23 @@ def secret():
     app.secret = request.form["secret"]
     app.clients = {}
     app.revealed = False
+
+    resp = jsonify({})
+    resp.status_code = 200
+    return resp
+
+@app.route('/press_tolerance', methods = ['POST', 'GET'])
+def press_tolerance():
+    """
+        Client makes a GET to obtain { "press_tolerance": <tolerance> }
+        Client makes a POST?press_tolerance=<tolerance> to set it
+        Posts every 2 seconds
+    """
+    if request.method == 'GET':
+        resp = jsonify({ "press_tolerance": app.press_tolerance })
+        resp.status_code = 200
+        return resp
+    app.press_tolerance = int(request.form["press_tolerance"])
 
     resp = jsonify({})
     resp.status_code = 200
