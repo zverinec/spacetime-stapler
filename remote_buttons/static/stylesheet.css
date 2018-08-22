@@ -12,17 +12,21 @@ body {
 }
 
 .root {
-	height: 50%;
-	width: 50%;
+	height: 35%;
+	width: 70%;
 	margin: 10% auto 0% auto;
 	padding: 50px;
 	background-color: rgb(242,242,242);
 	box-shadow: 0 0 60px rgba(42,42,42,1);
 }
 
+#message {
+	font-size: 200%;
+}
+
 h1 {
 	font-size: 300%;
-	margin-top: 0px;
+	margin-top: 20px;
 }
 
 div {
