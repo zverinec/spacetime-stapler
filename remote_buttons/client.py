@@ -42,6 +42,7 @@ if __name__ == "__main__":
     button_deadtime = Every(10)
     status_time = Every(0.5)
     decision_deadline = 0
+    decision_time = 5
 
     if args.soft:
         button = lambda: not keyboard.is_pressed("space")
@@ -80,5 +81,7 @@ if __name__ == "__main__":
             requests.post(server + "/register", data={ "id": id } )
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
+            x = requests.get(server + "/press_tolerance")
+            decision_time = x.json()["press_tolerance"]
             requests.post(server + "/press", data={ "id": id } )
-            decision_deadline = timer() + 10
+            decision_deadline = timer() + decision_time + 1
