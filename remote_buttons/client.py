@@ -39,31 +39,46 @@ if __name__ == "__main__":
     print("got id: {}".format(id))
 
     register_timer = Every(2)
-    button_deadtime = Every(5)
+    button_deadtime = Every(10)
     status_time = Every(0.5)
+    decision_deadline = 0
 
     if args.soft:
-        button = lambda: keyboard.is_pressed("space")
-        reveal = lambda x: print("Revealed") if x else None
+        button = lambda: not keyboard.is_pressed("space")
+        reveal = lambda x, _: print("Revealed") if x else None
     else:
         btn = gpiozero.Button(26)
         led_g = gpiozero.LED(16)
         led_r = gpiozero.LED(20)
-        button = lambda: btn.is_pressed
-        reveal = lambda x: led_g.on() if x else led_g.off()
-        fail = lambda x: led_r.on() if x else led_r.off()
+        def r(x, limit):
+            if x:
+                led_g.on()
+                led_r.off()
+            else:
+                if timer() < limit:
+                    led_g.on()
+                    led_r.on()
+                else:
+                    led_g.off()
+                    led_r.on()
 
-        led_r.on()
-        time.sleep(5)
-        led_r.off()
+        button = lambda: btn.is_pressed
+        reveal = r
+
+        for i in range(10):
+            l = led_r if i % 2 == 0 else led_g
+            l.on()
+            time.sleep(0.3)
+            l.off()
 
     while True:
         if status_time.trigger():
             x = requests.get(server + "/status")
             status = x.json()["revealed"]
-            reveal(status)
+            reveal(status, decision_deadline)
         if register_timer.trigger():
             requests.post(server + "/register", data={ "id": id } )
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
             requests.post(server + "/press", data={ "id": id } )
+            decision_deadline = timer() + 10
