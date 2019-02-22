@@ -11,6 +11,7 @@ with open(file_encrypted, newline='') as csv1, \
     list_passwords = list(csv.reader(csv2, delimiter=','))
     csvdecrypted = csv.writer(csv3, delimiter=',')
     passnum = 0
+    csvdecrypted.writerow(["dimension_id-password_id","encrypted","password","decrypted"])
     for dimension_id, encrypted in csvencrypted:
         for i in [0,1]:
             password_id = list_passwords[passnum][0]
