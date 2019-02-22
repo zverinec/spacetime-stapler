@@ -1,2 +1,3 @@
-# TimeMachine
-All the materials for the Time Machine game
+# Spacetime stapler
+
+All the materials for the Spacetime stapler game
