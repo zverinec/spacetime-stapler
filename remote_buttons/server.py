@@ -16,7 +16,7 @@ alive_tolerance = 5
 show_tolerance = 5
 
 app.clients = {}
-app.secret = "The precious secret"
+app.secret = "Katapult"
 app.id_prefix = str(int(timer())) + "_"
 app.ids = iter_ids()
 app.revealed = False

@@ -20,7 +20,8 @@ class Every:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--soft", help="Do not use HW button", action="store_true")
-    parser.add_argument("url", help="url for the button server")
+    parser.add_argument("-u", "--url", help="url for the button server")
+    parser.add_argument("-d", "--direct", help="direct url for the server")
     args = parser.parse_args()
 
     if args.soft:
@@ -28,8 +29,12 @@ if __name__ == "__main__":
     else:
         import gpiozero
 
-    x = requests.get(args.url)
-    server = x.text.strip()
+    if args.url is not None:
+        x = requests.get(args.url).text
+    elif args.direct is not None:
+        x = args.direct
+
+    server = x.strip()
     if not server.startswith("http://"):
         server = "http://" + server
 

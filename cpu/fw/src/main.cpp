@@ -21,9 +21,10 @@ bool on = true;
 bool overrideFuel = false;
 
 static const char hexa[] = "0123456789ABCDEF";
+static const char abc[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 bool goodCode( const String& s ) {
-    for ( int i = 0; i != 12; i++ ) {
+    for ( int i = 0; i != 10; i++ ) {
         if ( keys[i] == s )
             return true;
     }
@@ -91,8 +92,8 @@ struct Input {
 
     bool update() {
         int steps = encoder.bigSteps();
-        if ( _direction > 0 && steps < _lastEncVal ||
-             _direction < 0 && steps > _lastEncVal )
+        if ( ( _direction > 0 && steps < _lastEncVal ) ||
+             ( _direction < 0 && steps > _lastEncVal ) )
         {
             nextPosition();
             return true;
@@ -139,13 +140,26 @@ void sendInfo( WiFiClient& client ) {
     static int counter = 0;
     client.print( "Frame: " );
     client.println( counter++ );
-    client.println( "Controls: \na: alert\nb: turn off\nc: turn on\nn: back to normal\nd: reset" );
+    client.println( " Controls \n"
+                    "===========" );
+    client.println( "  a: alert" );
+    client.println( "  b: turn OFF" );
+    client.println( "  c: turn ON" );
+    client.println( "  d: reset" );
+    client.println( "  f: famfare" );
+    client.println( "  x: remove last char" );
+    client.println( "  o: turn motor ON" );
+    client.println( "  p: turn motor OFF" );
 
-    client.print( "Fuel state: " );
+    client.println( " Status \n"
+                    "=========" );
+    client.print( "Fuel: " );
     client.println( analogRead( FUEL_PIN ) );
 
-    client.print( "Current input: " );
+    client.print( "Input: " );
     client.println( input._code );
+
+    client.println( "-------------------------" );
 }
 
 void doAlert() {
@@ -182,7 +196,7 @@ void checkFuel() {
     static unsigned long long warn = 0;
     static unsigned long long shutdown = 0 ;
     int value = analogRead( FUEL_PIN );
-    if ( value > 1300 ) {
+    if ( value > 1550 ) {
         turnOn();
         warn = millis() + 2000;
         shutdown = millis() + 6000;
@@ -207,6 +221,7 @@ void handleClient( WiFiClient& client ) {
     sendInfo( client );
     auto nextInfo = millis() + 1000;
     while( client.connected() ) {
+        delay(100);
         if ( client.available() ) {
             int c = client.read();
             Serial.print( "Client command: ");

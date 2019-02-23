@@ -1,18 +1,18 @@
-body { 
-	font-family: Verdana, Arial, Helvetica, sans-serif; 
-	color: rgb(42,42,42); 
-	background-color: rgb(242,242,242); 
-	text-align:center; 
-	margin: 0; 
-	padding: 0; 
-	height: 100%; 
-	background-image: url("circuit-background.png"); 
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: rgb(42,42,42);
+	background-color: rgb(242,242,242);
+	text-align:center;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	background-image: url("circuit-background.png");
 	background-repeat: repeat;
 	font-size: 150%;
 }
 
 .root {
-	height: 35%;
+	height: 45%;
 	width: 70%;
 	margin: 10% auto 0% auto;
 	padding: 50px;

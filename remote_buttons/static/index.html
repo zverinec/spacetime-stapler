@@ -7,7 +7,7 @@
     </head>
     <body>
 	<div class="root">
-	        <h1>Časoprostor je nestabilní.</h1>
+	        <h1>Zde není nic k vidění (zatím).</h1>
         	<div id="message">
         	</div>
 	</div>
@@ -18,10 +18,10 @@
         function update() {
             $.get("status").done(function(data) {
                 if (data["revealed"]) {
-			$("#message").text("Dešifrovací heslo v této dimenzi má na svém náramku člověk s číslem " + data["secret"] + ".")
+			$("#message").html(data["secret"])
                 }
                 else {
-                    $("#message").text("Heslo se zobrazí po splnění úkolu.")
+                    $("#message").text("")
                 }
             });
         }

@@ -19,7 +19,7 @@ struct Buzzer {
         _dacCosineEnable( channel );
         dac_output_enable( channel );
         _dacScaleSet( channel, volume );
-        _dacFrequencySet( 0b111, frequency * 65535 / 1'000'000 );
+        _dacFrequencySet( 0b111, frequency * 65535 / 1000000 );
     }
 
     void stop( dac_channel_t channel ) {
@@ -40,6 +40,8 @@ struct Buzzer {
                 SET_PERI_REG_MASK(SENS_SAR_DAC_CTRL2_REG, SENS_DAC_CW_EN2_M);
                 SET_PERI_REG_BITS(SENS_SAR_DAC_CTRL2_REG, SENS_DAC_INV2, 2, SENS_DAC_INV2_S);
                 break;
+            default:
+                break;
         }
     }
 
@@ -56,6 +58,8 @@ struct Buzzer {
             case DAC_CHANNEL_2:
                 SET_PERI_REG_BITS(SENS_SAR_DAC_CTRL2_REG, SENS_DAC_SCALE2, scale, SENS_DAC_SCALE2_S);
                 break;
+            default:
+                break;
         }
     }
 
@@ -68,6 +72,8 @@ struct Buzzer {
             case DAC_CHANNEL_2:
                 SET_PERI_REG_BITS(SENS_SAR_DAC_CTRL2_REG, SENS_DAC_DC2, offset, SENS_DAC_DC2_S);
                 break;
+            default:
+                break;
         }
     }
 
@@ -78,6 +84,8 @@ struct Buzzer {
                 break;
             case DAC_CHANNEL_2:
                 SET_PERI_REG_BITS(SENS_SAR_DAC_CTRL2_REG, SENS_DAC_INV2, invert, SENS_DAC_INV2_S);
+                break;
+            default:
                 break;
         }
     }
