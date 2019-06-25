@@ -3,6 +3,10 @@
 from flask import Flask, request, send_from_directory, jsonify
 from timeit import default_timer as timer
 import itertools
+from serial import Serial
+import serial.tools.list_ports
+import _thread
+import time
 
 app = Flask(__name__, static_url_path='')
 
@@ -22,6 +26,29 @@ app.ids = iter_ids()
 app.revealed = False
 app.hide_time = 0
 app.press_tolerance = 3
+app.on = False
+
+def handle_serial():
+    while True:
+        try:
+            ports = serial.tools.list_ports.grep(".*ttyUSB.*")
+            portName = None
+            for i, port in enumerate(ports):
+                if i == 0:
+                    portName = port.device
+                print("{}: found {}".format(i, port.device))
+            if not portName:
+                raise RuntimeError("No port found")
+            print("Using {}".format(portName))
+            port = Serial(portName, 9600, timeout=5)
+            while True:
+                line = port.readline().decode('utf-8').strip()
+                print("Got {}".format(line))
+                if line[ 0 ] == 'Y':
+                    app.on = True
+        except Exception as e:
+            print(e)
+        time.sleep(2)
 
 class Client:
     def __init__(self):
@@ -103,7 +130,8 @@ def status():
     data = {
         "revealed": app.revealed,
         "clients": active_count(app.clients),
-        "secret": app.secret
+        "secret": app.secret,
+        "on": app.on
     }
     resp = jsonify(data)
     resp.status_code = 200
@@ -142,6 +170,15 @@ def secret():
     resp.status_code = 200
     return resp
 
+@app.route('/turn/on', methods = ['POST'])
+def on():
+    app.on = True
+
+@app.route('/turn/off', methods = ['POST'])
+def off():
+    app.on = False
+
+
 @app.route('/press_tolerance', methods = ['POST', 'GET'])
 def press_tolerance():
     """
@@ -160,4 +197,5 @@ def press_tolerance():
     return resp
 
 if __name__ == "__main__":
+    _thread.start_new_thread(handle_serial, ())
     app.run(host='0.0.0.0')

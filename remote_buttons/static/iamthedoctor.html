@@ -30,6 +30,10 @@
                 Current secret: <span id="secret"></span>
             </div>
         </div>
+        <div>
+            <button onclick="turnOn()" type="button">Turn ON</button>
+            <button onclick="turnOff()" type="button">Turn OFF!</button>
+        </div>
     </div>
     </body>
 
@@ -51,6 +55,14 @@
             $.get("press_tolerance").done(function(data) {
                 $("#tolerance").val(data["press_tolerance"]);
             });
+        }
+
+        function turnOn() {
+            $.post("turn/on");
+        }
+
+        function turnOff() {
+            $.post("turn/off");
         }
 
         function update() {

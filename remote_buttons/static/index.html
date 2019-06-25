@@ -1,33 +1,45 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta http-equiv="content-language" content="cz">
-        <link href="stylesheet.css" media="screen" rel="stylesheet" type="text/css">
-        <title>The Button</title>
-    </head>
-    <body>
-	<div class="root">
-	        <h1>Zde není nic k vidění (zatím).</h1>
-        	<div id="message">
-        	</div>
-	</div>
-    </body>
 
-    <script src="jquery-3.3.1.min.js"></script>
-    <script>
-        function update() {
-            $.get("status").done(function(data) {
-                if (data["revealed"]) {
-			$("#message").html(data["secret"])
-                }
-                else {
-                    $("#message").text("")
-                }
-            });
-        }
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-language" content="cz">
+    <link href="stylesheet.css" media="screen" rel="stylesheet" type="text/css">
+    <title>The Button</title>
+</head>
 
-        $(document).ready(function(){
-            setInterval(update,1000);
+<body>
+    <div class="root">
+        <h1>There is nothing to see (yet)</h1>
+        <div id="message">
+        </div>
+    </div>
+    <div class="overlay">
+
+    </div>
+</body>
+
+<script src="jquery-3.3.1.min.js"></script>
+<script>
+    function update() {
+        $.get("status").done(function (data) {
+            if (data["revealed"]) {
+                $("#message").html(data["secret"])
+            }
+            else {
+                $("#message").text("")
+            }
+            if (data["on"]) {
+                $(".overlay").hide();
+            }
+            else {
+                $(".overlay").show();
+            }
         });
-    </script>
+    }
+
+    $(document).ready(function () {
+        setInterval(update, 1000);
+    });
+</script>
+
 </html>
