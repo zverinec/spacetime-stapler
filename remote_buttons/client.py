@@ -93,9 +93,9 @@ if __name__ == "__main__":
                     reveal(status, decision_deadline)
                 if register_timer.trigger():
                     requests.post(server + "/register", data={ "id": id } )
-            except Exception as e:
-                print(e)
-                sys.exit(1)
+        except Exception as e:
+            print(e)
+            sys.exit(1)
     _thread.start_new_thread(update_status, ())
     while True:
         if not button() and button_deadtime.trigger():
