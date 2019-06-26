@@ -87,5 +87,7 @@ if __name__ == "__main__":
             requests.post(server + "/register", data={ "id": id } )
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
-            requests.post(server + "/press", data={ "id": id } )
             decision_deadline = timer() + decision_time + 1
+            reveal(status, decision_deadline)
+            requests.post(server + "/press", data={ "id": id } )
+
