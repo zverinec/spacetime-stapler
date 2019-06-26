@@ -83,6 +83,8 @@ if __name__ == "__main__":
             time.sleep(0.3)
             l.off()
 
+    status = requests.get(server + "/status").json()
+
     def update_status():
         try:
             while True:
