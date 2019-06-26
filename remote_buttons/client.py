@@ -51,13 +51,16 @@ if __name__ == "__main__":
 
     if args.soft:
         button = lambda: not keyboard.is_pressed("space")
-        reveal = lambda x, _: print("Revealed") if x else None
+        reveal = lambda x, _: print("Revealed") if x["revealed"] else None
     else:
         btn = gpiozero.Button(26)
         led_g = gpiozero.LED(16)
         led_r = gpiozero.LED(20)
-        def r(x, limit):
-            if x:
+        def r(state, limit):
+            if not state["on"]:
+                led_g.off()
+                led_r.off()
+            if state["revealed"]:
                 led_g.on()
                 led_r.off()
             else:
@@ -80,7 +83,7 @@ if __name__ == "__main__":
     while True:
         if status_time.trigger():
             x = requests.get(server + "/status")
-            status = x.json()["revealed"]
+            status = x.json()
             decision_time = x.json()["press_tolerance"]
             reveal(status, decision_deadline)
         if register_timer.trigger():
