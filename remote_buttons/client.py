@@ -105,6 +105,8 @@ if __name__ == "__main__":
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
             decision_deadline = timer() + decision_time + 1
-            reveal(status, decision_deadline)
+            # reveal(status, decision_deadline)
+            led_g.on()
+            led_r.on()
             requests.post(server + "/press", data={ "id": id } )
 
