@@ -4,6 +4,8 @@ import requests
 import argparse
 from timeit import default_timer as timer
 import time
+import sys
+import _thread
 
 class Every:
     def __init__(self, period):
@@ -81,14 +83,21 @@ if __name__ == "__main__":
             time.sleep(0.3)
             l.off()
 
+    def update_status():
+        try:
+            while True:
+                if status_time.trigger():
+                    x = requests.get(server + "/status")
+                    status = x.json()
+                    decision_time = x.json()["press_tolerance"]
+                    reveal(status, decision_deadline)
+                if register_timer.trigger():
+                    requests.post(server + "/register", data={ "id": id } )
+            except Exception as e:
+                print(e)
+                sys.exit(1)
+    _thread.start_new_thread(update_status, ())
     while True:
-        if status_time.trigger():
-            x = requests.get(server + "/status")
-            status = x.json()
-            decision_time = x.json()["press_tolerance"]
-            reveal(status, decision_deadline)
-        if register_timer.trigger():
-            requests.post(server + "/register", data={ "id": id } )
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
             decision_deadline = timer() + decision_time + 1
