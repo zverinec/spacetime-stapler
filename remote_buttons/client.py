@@ -60,6 +60,7 @@ if __name__ == "__main__":
             if not state["on"]:
                 led_g.off()
                 led_r.off()
+                return
             if state["revealed"]:
                 led_g.on()
                 led_r.off()
