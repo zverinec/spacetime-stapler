@@ -81,12 +81,11 @@ if __name__ == "__main__":
         if status_time.trigger():
             x = requests.get(server + "/status")
             status = x.json()["revealed"]
+            decision_time = x.json()["press_tolerance"]
             reveal(status, decision_deadline)
         if register_timer.trigger():
             requests.post(server + "/register", data={ "id": id } )
         if not button() and button_deadtime.trigger():
             print("Button was pressed!")
-            x = requests.get(server + "/press_tolerance")
-            decision_time = x.json()["press_tolerance"]
-            requests.post(server + "/press", data={ "id": id } )
             decision_deadline = timer() + decision_time + 1
+            requests.post(server + "/press", data={ "id": id } )

@@ -9,13 +9,13 @@
 #include "credentials.hpp"
 #include "keys.hpp"
 
-#define USE_AP
+#define USE_STA
 
 static const int MOTOR_PIN = 33;
 static const int FUEL_PIN = 34;
 
 LiquidCrystal_I2C lcd ( 0x27, 20, 4 );
-QuadratureEncoder encoder( GPIO_NUM_13, GPIO_NUM_12, GPIO_NUM_14 );
+QuadratureEncoder encoder( GPIO_NUM_12, GPIO_NUM_13, GPIO_NUM_14 );
 Buzzer buzzer;
 bool on = true;
 bool overrideFuel = false;
@@ -146,6 +146,7 @@ void sendInfo( WiFiClient& client ) {
     client.println( "  b: turn OFF" );
     client.println( "  c: turn ON" );
     client.println( "  d: reset" );
+    client.println( "  n: disable fuel override" );
     client.println( "  f: famfare" );
     client.println( "  x: remove last char" );
     client.println( "  o: turn motor ON" );
@@ -195,7 +196,13 @@ void turnOn() {
 void checkFuel() {
     static unsigned long long warn = 0;
     static unsigned long long shutdown = 0 ;
-    int value = analogRead( FUEL_PIN );
+    const int samples = 10;
+    int value = 0;
+    for ( int i = 0; i != samples; i++ ) {
+        value += analogRead( FUEL_PIN );
+        delay( 2 );
+    }
+    value /= samples;
     if ( value > 1550 ) {
         turnOn();
         warn = millis() + 2000;
@@ -215,6 +222,47 @@ void checkFuel() {
 void reset() {
     digitalWrite( MOTOR_PIN, HIGH );
     input._code = "";
+}
+
+void setupWifi( bool useDisplay = false ) {
+#ifdef USE_AP
+    WiFi.softAP( AP_SSID, AP_PASS );
+    Serial.print( "IP: " );
+    Serial.println( WiFi.softAPIP() );
+    if ( useDisplay ) {
+        lcd.setCursor( 0, 0 );
+        lcd.print(WiFi.softAPIP().toString());
+        delay( 4000 );
+    }
+#elif defined USE_STA
+    WiFi.begin( C_SSID, C_PASS );
+    int counter = 0;
+    while( WiFi.status() != WL_CONNECTED ) {
+        counter++;
+        if ( counter == 15 ) {
+            counter = 0;
+            Serial.println("Trying again");
+            WiFi.begin( C_SSID, C_PASS );
+        }
+        Serial.print( "Connecting... " );
+        Serial.println( WiFi.status() );
+        if ( useDisplay ) {
+            lcd.setCursor( 0, 0 );
+            lcd.print( "Connecting... " );
+            lcd.println( WiFi.status() );
+        }
+        delay( 1000 );
+    }
+    Serial.print( "IP: " );
+    Serial.println( WiFi.localIP() );
+    if ( useDisplay ) {
+        lcd.setCursor( 0, 0 );
+        lcd.print( WiFi.localIP().toString() );
+        delay( 4000 );
+    }
+#else
+    #error "No mode defined"
+#endif
 }
 
 void handleClient( WiFiClient& client ) {
@@ -284,6 +332,10 @@ void remoteControl( void* ) {
         auto client = server.available();
         if ( client )
             handleClient( client );
+        if ( WiFi.getMode() == WIFI_MODE_STA &&  WiFi.status() != WL_CONNECTED ) {
+            Serial.println( "Connection lost, setting up WiFi" );
+            setupWifi();
+        }
     }
 }
 
@@ -292,33 +344,16 @@ void setup() {
     Serial.begin( 115200 );
     gpio_install_isr_service( 0 );
     encoder.start();
-
-#ifdef USE_AP
-    WiFi.softAP( AP_SSID, AP_PASS );
-    Serial.print( "IP: " );
-    Serial.println( WiFi.softAPIP() );
-#elif defined USE_STA
-    WiFi.begin( C_SSID, C_PASS );
-    while( WiFi.status() != WL_CONNECTED ) {
-        Serial.print( "Connecting... " );
-        Serial.println( WiFi.status() );
-        delay( 1000 );
-    }
-    Serial.print( "IP: " );
-    Serial.println( WiFi.localIP() );
-#else
-    #error "No mode defined"
-#endif
-
+    pinMode( MOTOR_PIN, OUTPUT );
+    digitalWrite( MOTOR_PIN, HIGH );
     lcd.init();
     lcd.backlight();
     lcd.blink_on();
 
-    pinMode( MOTOR_PIN, OUTPUT );
-    digitalWrite( MOTOR_PIN, HIGH );
-
     updateLcd( "" );
     encoder.reset();
+
+    setupWifi( true );
 
     xTaskCreate( remoteControl, "control", 4096, nullptr, 5, nullptr );
 }

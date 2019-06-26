@@ -131,7 +131,8 @@ def status():
         "revealed": app.revealed,
         "clients": active_count(app.clients),
         "secret": app.secret,
-        "on": app.on
+        "on": app.on,
+        "press_tolerance": app.press_tolerance
     }
     resp = jsonify(data)
     resp.status_code = 200
