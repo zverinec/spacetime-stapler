@@ -4,7 +4,7 @@ import requests
 import argparse
 from timeit import default_timer as timer
 import time
-import sys
+import os
 import _thread
 
 class Every:
@@ -94,11 +94,12 @@ if __name__ == "__main__":
                     reveal(status, decision_deadline)
                 if register_timer.trigger():
                     requests.post(server + "/register", data={ "id": id } )
+                time.sleep(0.1)
         except Exception as e:
             print(e)
             led_g.off()
             led_r.off()
-            sys.exit(1)
+            os.kill(os.getpid(), signal.SIGINT)
     _thread.start_new_thread(update_status, ())
     while True:
         if not button() and button_deadtime.trigger():
