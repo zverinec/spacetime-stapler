@@ -84,7 +84,6 @@ if __name__ == "__main__":
             l.off()
 
     status = requests.get(server + "/status").json()
-
     def update_status():
         try:
             while True:
@@ -97,6 +96,8 @@ if __name__ == "__main__":
                     requests.post(server + "/register", data={ "id": id } )
         except Exception as e:
             print(e)
+            led_g.off()
+            led_r.off()
             sys.exit(1)
     _thread.start_new_thread(update_status, ())
     while True:
