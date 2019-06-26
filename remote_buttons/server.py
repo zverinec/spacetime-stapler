@@ -188,10 +188,16 @@ def public():
 @app.route('/turn/on', methods = ['POST'])
 def on():
     app.on = True
+    resp = jsonify({})
+    resp.status_code = 200
+    return resp
 
 @app.route('/turn/off', methods = ['POST'])
 def off():
     app.on = False
+    resp = jsonify({})
+    resp.status_code = 200
+    return resp
 
 
 @app.route('/press_tolerance', methods = ['POST', 'GET'])
