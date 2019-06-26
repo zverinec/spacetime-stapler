@@ -9,9 +9,14 @@
     <div class="root">
         <h1>The service page</h1>
         <div>
+            <label>Enter new public text:</label>
+            <input type="text" id="newtext">
+            <button onclick="setText()" type="button">Change</button>
+        </div>
+        <div>
             <label>Enter new secret:</label>
             <input type="text" id="newsecret">
-            <button onclick="reset()" type="button">Reset it!</button>
+            <button onclick="resetSecret()" type="button">Reset</button>
         </div>
 
         <div>
@@ -26,9 +31,6 @@
             <div>
                 Revealed: <span id="revealed"></span>
             </div>
-            <div>
-                Current secret: <span id="secret"></span>
-            </div>
         </div>
         <div>
             <button onclick="turnOn()" type="button">Turn ON</button>
@@ -39,9 +41,15 @@
 
     <script src="jquery-3.3.1.min.js"></script>
     <script>
-        function reset() {
+        function resetSecret() {
             s = $("#newsecret").val()
             $.post("secret", {"secret": s});
+        }
+
+        function setText() {
+            s = $("#newtext").val()
+            console.log(s);
+            $.post("public", {"public": s});
         }
 
         function setTolerance() {
@@ -74,12 +82,19 @@
                 else {
                     $("#revealed").text("No");
                 }
-                $("#secret").html(data["secret"]);
+            });
+        }
+
+        function fillForms() {
+            $.get("status").done(function(data) {
+                $("#newsecret").val(data["secret"]);
+                $("#newtext").val(data["public"]);
             });
         }
 
         $(document).ready(function(){
             update();
+            fillForms();
             setInterval(update,3000);
             refreshTolerance();
         });

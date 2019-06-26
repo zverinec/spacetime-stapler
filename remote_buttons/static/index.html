@@ -9,7 +9,6 @@
 
 <body>
     <div class="root">
-        <h1>There is nothing to see (yet)</h1>
         <div id="message">
         </div>
     </div>
@@ -26,7 +25,7 @@
                 $("#message").html(data["secret"])
             }
             else {
-                $("#message").text("")
+                $("#message").html(data["public"])
             }
             if (data["on"]) {
                 $(".overlay").hide();
@@ -38,6 +37,7 @@
     }
 
     $(document).ready(function () {
+        update();
         setInterval(update, 1000);
     });
 </script>

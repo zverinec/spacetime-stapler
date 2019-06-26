@@ -20,7 +20,8 @@ alive_tolerance = 5
 show_tolerance = 5
 
 app.clients = {}
-app.secret = "Katapult"
+app.text = "<h1>This is the default public message</h1>"
+app.secret = "<h1>This is the default secret message</h1>"
 app.id_prefix = str(int(timer())) + "_"
 app.ids = iter_ids()
 app.revealed = False
@@ -131,6 +132,7 @@ def status():
         "revealed": app.revealed,
         "clients": active_count(app.clients),
         "secret": app.secret,
+        "public": app.text,
         "on": app.on,
         "press_tolerance": app.press_tolerance
     }
@@ -159,13 +161,25 @@ def secret():
         POST?secret=<your secret>
     """
     print(request.form)
-    print("Here")
     for key, value in request.form.items():
         print(key, value)
-    print("There")
     app.secret = request.form["secret"]
     app.clients = {}
     app.revealed = False
+
+    resp = jsonify({})
+    resp.status_code = 200
+    return resp
+
+@app.route('/public', methods = ['POST'])
+def public():
+    """
+        POST?public=<your secret>
+    """
+    print(request.form)
+    for key, value in request.form.items():
+        print(key, value)
+    app.text = request.form["public"]
 
     resp = jsonify({})
     resp.status_code = 200
