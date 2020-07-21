@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp",
+        "cmath": "cpp",
+        "cstdlib": "cpp"
+    },
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/xmrazek7/.platformio/penv/bin:/home/xmrazek7/.platformio/penv:/opt/avr-gcc-9.1.0-x64-linux/bin:/opt/arm-none-eabi-gcc-9.1.0-190520/bin/:/home/xmrazek7/.cabal/bin:/home/xmrazek7/esp/xtensa-esp32-elf/bin:/home/xmrazek7/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}
