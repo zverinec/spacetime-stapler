@@ -6,6 +6,7 @@ from timeit import default_timer as timer
 import time
 import os
 import _thread
+import signal
 
 class Every:
     def __init__(self, period):
